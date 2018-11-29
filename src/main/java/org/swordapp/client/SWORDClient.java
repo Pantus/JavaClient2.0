@@ -93,10 +93,22 @@ public class SWORDClient
     public ServiceDocument getServiceDocument(String sdURL)
             throws SWORDClientException, ProtocolViolationException
     {
-        return this.getServiceDocument(sdURL, null);
+        return this.getServiceDocument(sdURL, null, null);
     }
 
-    public ServiceDocument getServiceDocument(String sdURL, AuthCredentials auth)
+    public ServiceDocument getServiceDocument(String sdURL, String accessToken)
+        throws SWORDClientException, ProtocolViolationException
+    {
+      return this.getServiceDocument(sdURL, null, accessToken);
+    }
+
+    public ServiceDocument getServiceDocument(String sdURL, AuthCredentials authCredentials)
+        throws SWORDClientException, ProtocolViolationException
+    {
+      return this.getServiceDocument(sdURL, authCredentials, null);
+    }
+
+    public ServiceDocument getServiceDocument(String sdURL, AuthCredentials auth, String accessToken)
             throws SWORDClientException, ProtocolViolationException
     {
         // do some error checking and validations
@@ -113,7 +125,11 @@ public class SWORDClient
         AbderaClient client = new AbderaClient(this.abdera);
         RequestOptions options = this.getDefaultRequestOptions();
 
-        // prepare the bits of the request
+        if (accessToken != null) {
+          options.setAuthorization("Bearer " + accessToken);
+        }
+
+      // prepare the bits of the request
 
         // ensure that the URL is valid
         URL url = this.formaliseURL(sdURL);
@@ -235,16 +251,28 @@ public class SWORDClient
     public DepositReceipt deposit(SWORDCollection collection, Deposit deposit)
             throws SWORDClientException, SWORDError, ProtocolViolationException
     {
-        return this.deposit(collection, deposit, null);
+        return this.deposit(collection, deposit, null, null);
     }
 
     public DepositReceipt deposit(String targetURL, Deposit deposit)
             throws SWORDClientException, SWORDError, ProtocolViolationException
     {
-        return this.deposit(targetURL, deposit, null);
+        return this.deposit(targetURL, deposit, null, null);
     }
 
-    public DepositReceipt deposit(SWORDCollection collection, Deposit deposit, AuthCredentials auth)
+  public DepositReceipt deposit(SWORDCollection collection, Deposit deposit, String accessToken)
+      throws SWORDClientException, SWORDError, ProtocolViolationException
+  {
+    return this.deposit(collection, deposit, null, accessToken);
+  }
+
+  public DepositReceipt deposit(SWORDCollection collection, Deposit deposit, AuthCredentials authCredentials)
+      throws SWORDClientException, SWORDError, ProtocolViolationException
+  {
+    return this.deposit(collection, deposit, authCredentials, null);
+  }
+
+    public DepositReceipt deposit(SWORDCollection collection, Deposit deposit, AuthCredentials auth, String accessToken)
             throws SWORDClientException, SWORDError, ProtocolViolationException
     {
 		if (!collection.allowsMediation() && auth.getOnBehalfOf() != null)
@@ -262,10 +290,10 @@ public class SWORDClient
 						"package formats before next run");
 			}
 		}
-        return this.deposit(collection.getHref().toString(), deposit, auth);
+        return this.deposit(collection.getHref().toString(), deposit, auth, accessToken);
     }
 
-    public DepositReceipt deposit(String collectionURL, Deposit deposit, AuthCredentials auth)
+    public DepositReceipt deposit(String collectionURL, Deposit deposit, AuthCredentials auth, String accessToken)
             throws SWORDClientException, SWORDError, ProtocolViolationException
     {
         // some initial error checking and validation
@@ -286,6 +314,9 @@ public class SWORDClient
 
         AbderaClient client = new AbderaClient(this.abdera);
         RequestOptions options = this.getDefaultRequestOptions();
+        if(accessToken != null) {
+          options.setAuthorization("Bearer " + accessToken);
+        }
         HttpHeaders http = new HttpHeaders();
 
         // ensure that the URL is valid
@@ -1172,7 +1203,7 @@ public class SWORDClient
 		String location = http.getLocation(resp);
         String contentMD5 = http.getContentMD5(resp);
         Date lastModified = http.getLastModified(resp);
-        
+
 		// it is possible that the doc will be null
 
 		// if there is no doc and no location header this is broken
@@ -1375,7 +1406,7 @@ public class SWORDClient
 			throw new ProtocolViolationException("Unexpected response code " + status);
 		}
     }
-	
+
 	public Content getContent(SwordIdentifier contentId)
 			throws SWORDClientException, ProtocolViolationException, SWORDError
 	{
@@ -1558,6 +1589,7 @@ public class SWORDClient
                 try
                 {
                     client.addCredentials(auth.getTarget(), auth.getRealm(), "basic", unpw);
+
                 }
                 catch (URISyntaxException e)
                 {

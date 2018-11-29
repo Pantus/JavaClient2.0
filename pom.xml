@@ -3,10 +3,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.swordapp</groupId>
-    <artifactId>sword2-client</artifactId>
+    <artifactId>sword2-client-qulto</artifactId>
     <version>0.9.4-SNAPSHOT</version>
     <packaging>jar</packaging>
-    
+
     <name>SWORD v2 :: Client Library</name>
     <description>
         Client library for interacting with servers offering SWORDv2 endpoints.
@@ -110,20 +110,20 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-gpg-plugin</artifactId>-->
+                <!--<version>1.5</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>sign-artifacts</id>-->
+                        <!--<phase>verify</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>sign</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
